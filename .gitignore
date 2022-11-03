@@ -4,6 +4,15 @@ argparse_prueba.py
 descargar_audio.py
 pruebas.py
 lista.txt
+*.m4a
+*.mp3
+
+## binarios
+**/__pycache__/**
+build/
+emusica.egg-info/
+dist/
 
 ## IDE's
-.idea/
+.idea/*
+.vscode/*
