@@ -6,7 +6,7 @@ import subprocess
 class Cancion:
     tiempo_final = '0'
 
-    def __init__(self, tiempo, nombre, artista='', album=''):
+    def __init__(self, tiempo, artista='', nombre='',  album=''):
         self.tiempo_inicial = tiempo
         self.nombre = nombre[1:-1]
         self.artista = artista[1:-1]
@@ -15,7 +15,7 @@ class Cancion:
     def __repr__(self):
         return """
 ["{}", "{}", "{}", "{}"]
-""".format(self.tiempo_inicial, self.nombre, self.artista, self.album)
+""".format(self.tiempo_inicial, self.artista,  self.nombre, self.album)
 
 
 def creacion_de_cancion(caso, coincidencia):
@@ -33,8 +33,8 @@ def creacion_de_cancion(caso, coincidencia):
     if caso == 3:
         return Cancion(
             coincidencia.group(1),
-            coincidencia.group(3),
             '',
+            coincidencia.group(3),
             coincidencia.group(4)
         )
     if caso == 4:
@@ -44,6 +44,17 @@ def creacion_de_cancion(caso, coincidencia):
             coincidencia.group(4),
             coincidencia.group(5)
         )
+
+
+def caso_cadena(caso):
+    if caso == 1:
+        return "[tiempo] [nombre]"
+    if caso == 2:
+        return "[tiempo] [artista] [nombre]"
+    if caso == 3:
+        return "[tiempo] [nombre] [album]"
+    if caso == 4:
+        return "[tiempo] [artista] [nombre] [album]"
 
 
 def analizar_archivo(archivo_lista_canciones, expresion_regular, caso):
@@ -56,7 +67,7 @@ def analizar_archivo(archivo_lista_canciones, expresion_regular, caso):
             if coincidencias is not None:
                 lista_canciones.append(creacion_de_cancion(caso, coincidencias))
             else:
-                error = "Error en el formato del archivo línea {}"
+                error = "Error en el formato del archivo línea {}\nEl formato debe ser: "+caso_cadena(caso)
                 raise Exception(error.format(count))
             count += 1
     return lista_canciones
@@ -104,7 +115,8 @@ def main():
         Ejemplo de una línea en el archivo: 
         > 00:00 "Nombre de canción"
         
-        Si se unen las opciones -a y -b de esta forma -ab. El formato puede debe ser: ```[tiempo] [nombre] [artista] [album]```
+        Si se unen las opciones -a y -b de esta forma -ab. El formato puede debe ser: ```[tiempo] [artista] [nombre] 
+        [album]``` 
         
         Ejemplo de una línea en el archivo: 
         
@@ -132,7 +144,7 @@ def main():
     artist_desc = """ 
      Si el archivo contiene artistas puede agregar esta bandera. 
      El formato del archivo para cada línea debera ser: 
-     [tiempo] [nombre] [artista]
+     [tiempo] [artista] [nombre]
     """
     parser.add_argument('--artist', '-a', help=artist_desc, action='store_true')
 
@@ -145,15 +157,15 @@ def main():
     artist = args.artist
     # Expresión regular para analizar la lista de canciones dependiendo de los argumentos
     caso = 1
-    expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")'
+    expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s*$'
     if artist and not album:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s*$'
         caso = 2
     if album and not artist:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s*$'
         caso = 3
     if album and artist:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s+("[^"]+")'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s+("[^"]+")\s*$'
         caso = 4
 
     try:
