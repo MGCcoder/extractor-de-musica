@@ -7,7 +7,7 @@ El formato por defecto para la lista de canciones es:```[tiempo] [nombre]``` por
 Ejemplo de una línea en el archivo: 
 > 00:00 "Nombre de canción"
 
-Si se unen las opciones -a y -b de esta forma -ab. El formato puede debe ser: ```[tiempo] [artista] [nombre] [album]```
+Si se unen las opciones -a y -b de esta forma -ab. El formato debe ser: ```[tiempo] [artista] [nombre] [album]```
 
 Ejemplo de una línea en el archivo: 
 
