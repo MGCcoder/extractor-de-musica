@@ -1,6 +1,7 @@
 import argparse
 import re
 import subprocess
+import platform
 
 
 class Cancion:
@@ -8,9 +9,9 @@ class Cancion:
 
     def __init__(self, tiempo, artista='', nombre='',  album=''):
         self.tiempo_inicial = tiempo
-        self.nombre = nombre[1:-1]
-        self.artista = artista[1:-1]
-        self.album = album[1:-1]
+        self.nombre = nombre[1:-1].strip()
+        self.artista = artista[1:-1].strip()
+        self.album = album[1:-1].strip()
 
     def __repr__(self):
         return """
@@ -75,10 +76,12 @@ def analizar_archivo(archivo_lista_canciones, expresion_regular, caso):
 
 def calcular_tiempo_final(lista_canciones, archivo_de_musica):
     # Obtiene la duracion del archivo
-    command = "ffmpeg -i '{0}' 2>&1 | grep 'Duration'".format(archivo_de_musica)
+    # command = "ffmpeg -i '{0}' 2>&1 | grep 'Duration'".format(archivo_de_musica)
+    command = 'ffprobe -i "{0}" -show_entries format=duration -v quiet -of csv="p=0" -sexagesimal'.format(archivo_de_musica)
     p = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
     result = p.stdout.decode()
-    duracion = re.search(r'((\d{1,2}:){1,2}\d{1,2}.\d{1,2})', result).group()
+    duracion = re.search(r'((\d{1,2}:){1,2}\d{1,2})', result).group()
+    print(duracion)
 
     for i in range(len(lista_canciones) - 1):
         lista_canciones[i].tiempo_final = lista_canciones[i + 1].tiempo_inicial
@@ -91,18 +94,39 @@ def separar_canciones(lista_canciones, archivo_de_musica):
     lista_canciones = calcular_tiempo_final(lista_canciones, archivo_de_musica)
     print("\n\nVideo: {}\n\n".format(archivo_de_musica))
     nombre_de_directorio = input('Escriba el nombre del nuevo directorio donde se guardaran las canciones: ')
-    subprocess.call("mkdir '{}'".format(nombre_de_directorio), shell=True)
-    for cancion in lista_canciones:
-        # Este comando corta una cancion en un intervalo de tiempo
-        separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/cancion.mp3'".format(
-            archivo_de_musica, cancion, nombre_de_directorio)
-        metadatos = "ffmpeg -i './{1}/cancion.mp3' -c copy -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
-            cancion, nombre_de_directorio)
-        borrar = "rm './{0}/cancion.mp3'".format(nombre_de_directorio)
-        print(metadatos)
-        subprocess.call(separar, shell=True)
-        subprocess.call(metadatos, shell=True)
-        subprocess.call(borrar, shell=True)
+    if(platform.system() == "Linux" or platform.system() == "Darwin"):
+        subprocess.call("mkdir '{}'".format(nombre_de_directorio), shell=True)
+        for cancion in lista_canciones:
+            # Este comando corta una cancion en un intervalo de tiempo
+            separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/cancion.mp3'".format(
+                archivo_de_musica, cancion, nombre_de_directorio)
+            metadatos = "ffmpeg -i './{1}/cancion.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
+                cancion, nombre_de_directorio)
+            borrar = "rm './{0}/cancion.mp3'".format(nombre_de_directorio)
+            print(separar)
+            print(metadatos)
+            subprocess.call(separar, shell=True)
+            subprocess.call(metadatos, shell=True)
+            subprocess.call(borrar, shell=True)
+    elif(platform.system() == "Windows"):
+        subprocess.call('mkdir "{}"'.format(nombre_de_directorio), shell=True)
+        for cancion in lista_canciones:
+            # Este comando corta una cancion en un intervalo de tiempo
+            separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\cancion.mp3"'.format(
+                archivo_de_musica, cancion, nombre_de_directorio)
+            metadatos = 'ffmpeg -i ".\{1}\cancion.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
+                cancion, nombre_de_directorio)
+            borrar = 'del ".\{0}\cancion.mp3"'.format(nombre_de_directorio)
+            print(separar)
+            print(metadatos)
+            subprocess.call(separar, shell=True)
+            subprocess.call(metadatos, shell=True)
+            subprocess.call(borrar, shell=True)
+    else:
+        error = "No se reconece el sistema operativo"
+        raise Exception(error)
+
+
 
 
 def main():
@@ -156,6 +180,7 @@ def main():
     album = args.album
     artist = args.artist
     # Expresión regular para analizar la lista de canciones dependiendo de los argumentos
+    # Nueva expresión regular ^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+-)\s*([^-]+)$
     caso = 1
     expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s*$'
     if artist and not album:
@@ -171,7 +196,6 @@ def main():
     try:
         # Regresa un arreglo de objetos con la lista de canciones
         lista_canciones = analizar_archivo(archivo_lista_canciones, expresion_regular, caso)
-        #print(lista_canciones)
     except Exception as e:
         print(e)
     #

@@ -31,7 +31,7 @@ Ejemplo de una línea en el archivo:
 ```
 
 ### Requisitos
-- linux
 - ffmpeg
+- python 3
 
 
