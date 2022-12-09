@@ -7,35 +7,38 @@ import platform
 class Cancion:
     tiempo_final = '0'
 
-    def __init__(self, tiempo, artista='', nombre='',  album=''):
+    def __init__(self, tiempo, album='', artista='', nombre=''):
         self.tiempo_inicial = tiempo
-        self.nombre = nombre[1:-1].strip()
-        self.artista = artista[1:-1].strip()
-        self.album = album[1:-1].strip()
+        self.nombre = nombre.replace('-', ' ').strip()
+        self.artista = artista.replace('-', ' ').strip()
+        self.album = album.replace('-', ' ').strip()
 
     def __repr__(self):
         return """
 ["{}", "{}", "{}", "{}"]
-""".format(self.tiempo_inicial, self.artista,  self.nombre, self.album)
+""".format(self.tiempo_inicial, self.nombre, self.artista, self.album)
 
 
 def creacion_de_cancion(caso, coincidencia):
     if caso == 1:
         return Cancion(
             coincidencia.group(1),
+            '',
+            '',
             coincidencia.group(3)
         )
     if caso == 2:
         return Cancion(
             coincidencia.group(1),
+            '',
             coincidencia.group(3),
             coincidencia.group(4)
         )
     if caso == 3:
         return Cancion(
             coincidencia.group(1),
-            '',
             coincidencia.group(3),
+            '',
             coincidencia.group(4)
         )
     if caso == 4:
@@ -51,11 +54,11 @@ def caso_cadena(caso):
     if caso == 1:
         return "[tiempo] [nombre]"
     if caso == 2:
-        return "[tiempo] [artista] [nombre]"
+        return "[tiempo] [artista] - [nombre]"
     if caso == 3:
-        return "[tiempo] [nombre] [album]"
+        return "[tiempo] [album] - [nombre]"
     if caso == 4:
-        return "[tiempo] [artista] [nombre] [album]"
+        return "[tiempo] [album] - [artista] - [nombre]"
 
 
 def analizar_archivo(archivo_lista_canciones, expresion_regular, caso):
@@ -103,8 +106,6 @@ def separar_canciones(lista_canciones, archivo_de_musica):
             metadatos = "ffmpeg -i './{1}/cancion.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
                 cancion, nombre_de_directorio)
             borrar = "rm './{0}/cancion.mp3'".format(nombre_de_directorio)
-            print(separar)
-            print(metadatos)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
@@ -117,8 +118,6 @@ def separar_canciones(lista_canciones, archivo_de_musica):
             metadatos = 'ffmpeg -i ".\{1}\cancion.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
                 cancion, nombre_de_directorio)
             borrar = 'del ".\{0}\cancion.mp3"'.format(nombre_de_directorio)
-            print(separar)
-            print(metadatos)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
@@ -138,7 +137,7 @@ def main():
     parser = argparse.ArgumentParser(description=desc)
 
     lista_desc = """
-    Es el nombre del archivo donde esta la lista de múscia con las marcas de tiempo.
+    Es el nombre del archivo de texto donde esta la lista con las marcas de tiempo.
     """
     parser.add_argument('--list', help=lista_desc, required=True)
 
@@ -148,16 +147,16 @@ def main():
     parser.add_argument('--music', help=musica, required=True)
 
     album_desc = """
-    Si el archivo contiene albumes puedes agregar esta bandera. 
+    Si el archivo contiene albums puedes agregar esta bandera. 
     El formato del archivo para cada línea debera ser: 
-    [tiempo] [nombre] [album]
+    [tiempo] [album] - [nombre]
     """
     parser.add_argument('--album', '-b', help=album_desc, action='store_true')
 
     artist_desc = """ 
      Si el archivo contiene artistas puede agregar esta bandera. 
      El formato del archivo para cada línea debera ser: 
-     [tiempo] [artista] [nombre]
+     [tiempo] [artista] - [nombre]
     """
     parser.add_argument('--artist', '-a', help=artist_desc, action='store_true')
 
@@ -171,15 +170,15 @@ def main():
     # Expresión regular para analizar la lista de canciones dependiendo de los argumentos
     # Nueva expresión regular ^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+-)\s*([^-]+)$
     caso = 1
-    expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s*$'
+    expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+)$'
     if artist and not album:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s*$'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+-)\s*([^-]+)$'
         caso = 2
     if album and not artist:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s*$'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+-)\s*([^-]+)$'
         caso = 3
     if album and artist:
-        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+("[^"]+")\s+("[^"]+")\s+("[^"]+")\s*$'
+        expresion_regular = '^((\d{1,2}:){1,2}\d{1,2})\s+([^-]+-)\s*([^-]+-)\s*([^-]+)$'
         caso = 4
 
     try:

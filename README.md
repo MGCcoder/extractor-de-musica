@@ -4,9 +4,9 @@ también permite agregar los metadatos de la canción como el nombre de artista 
 
 Cada la lista tiene que tener la siguiente estructura:
 ``` 
-00:00 "Nombre de canción"
-15:00 "Nombre de canción 2"
-30:00 "Nombre de canción 3"
+00:00 Nombre de canción 1
+15:00 Nombre de canción 2
+30:00 Nombre de canción 3
 ```
 
 Si quieres agregar información del artista o album se usan las opciones -a y -b
@@ -14,26 +14,26 @@ Si quieres agregar información del artista o album se usan las opciones -a y -b
 Por ejemplo usando la opción -a la estructura de la lista sería la siguiente:
 
 ``` 
-00:00 "Nombre de artista" "Nombre de canción"
-15:00 "Nombre de artista 2" "Nombre de canción 2"
-30:00 "Nombre de artista 3" "Nombre de canción 3"
+00:00 Nombre de artista 1 - Nombre de canción 1
+15:00 Nombre de artista 2 - Nombre de canción 2
+30:00 Nombre de artista 3 - Nombre de canción 3
 ```
 
 Usando la opción -b la estructura sería: 
 
 
 ``` 
-00:00 "Nombre de canción" "Nombre del album" 
-15:00 "Nombre de canción 2" "Nombre del album 2" 
-30:00 "Nombre de canción 3" "Nombre del album 3" 
+00:00 Nombre de album 1 - Nombre de canción 1
+15:00 Nombre de album 2 - Nombre de canción 2
+30:00 Nombre de album 3 - Nombre de canción 3
 ```
 
 Si se unen las 2 opciones -ab la estructura sería:
 
 ``` 
-00:00 "Nombre de artista" "Nombre de canción" "Nombre del album" 
-15:00 "Nombre de artista 2" "Nombre de canción 2" "Nombre del album 2" 
-30:00 "Nombre de artista 3" "Nombre de canción 3" "Nombre del album 3" 
+00:00 Nombre de album 1 - Nombre de artista 1 - Nombre de canción 1
+15:00 Nombre de album 2 - Nombre de artista 2 - Nombre de canción 2
+30:00 Nombre de album 3 - Nombre de artista 3 - Nombre de canción 3
 ```
 
 ### Opciones del comando:
@@ -46,11 +46,11 @@ Si se unen las 2 opciones -ab la estructura sería:
   
   --album,  -b       Si el archivo contiene albumes puedes agregar esta bandera. 
                      El formato del archivo para cada línea debera ser: 
-                     [tiempo] [nombre] [album]
+                     [tiempo] [album] - [nombre]
                      
   --artist, -a       Si el archivo contiene artistas puede agregar esta bandera. 
                      El formato del archivo para cada línea debera ser: 
-                     [tiempo] [artista] [nombre]
+                     [tiempo] [artista] - [nombre]
 ```
 
 ### Requisitos
