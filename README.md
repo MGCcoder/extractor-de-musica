@@ -2,18 +2,41 @@
 Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
 también permite agregar los metadatos de la canción como el nombre de artista o album.
 
-El formato por defecto para la lista de canciones es:```[tiempo] [nombre]``` por cada línea.
+Cada la lista tiene que tener la siguiente estructura:
+``` 
+00:00 "Nombre de canción"
+15:00 "Nombre de canción 2"
+30:00 "Nombre de canción 3"
+```
 
-Ejemplo de una línea en el archivo: 
-> 00:00 "Nombre de canción"
+Si quieres agregar información del artista o album se usan las opciones -a y -b
 
-Si se unen las opciones -a y -b de esta forma -ab. El formato debe ser: ```[tiempo] [artista] [nombre] [album]```
+Por ejemplo usando la opción -a la estructura de la lista sería la siguiente:
 
-Ejemplo de una línea en el archivo: 
+``` 
+00:00 "Nombre de artista" "Nombre de canción"
+15:00 "Nombre de artista 2" "Nombre de canción 2"
+30:00 "Nombre de artista 3" "Nombre de canción 3"
+```
 
-> 00:00 "Nombre de artista" "Nombre de canción" "Nombre de album"
+Usando la opción -b la estructura sería: 
 
-### Opciones:
+
+``` 
+00:00 "Nombre de canción" "Nombre del album" 
+15:00 "Nombre de canción 2" "Nombre del album 2" 
+30:00 "Nombre de canción 3" "Nombre del album 3" 
+```
+
+Si se unen las 2 opciones -ab la estructura sería:
+
+``` 
+00:00 "Nombre de artista" "Nombre de canción" "Nombre del album" 
+15:00 "Nombre de artista 2" "Nombre de canción 2" "Nombre del album 2" 
+30:00 "Nombre de artista 3" "Nombre de canción 3" "Nombre del album 3" 
+```
+
+### Opciones del comando:
 ```
   -h,     --help     show this help message and exit
   
@@ -31,7 +54,12 @@ Ejemplo de una línea en el archivo:
 ```
 
 ### Requisitos
-- ffmpeg
-- python 3
+- Python 3
+- Ffmpeg
+
+### Sistemas Operativos compatibles
+- Windows
+- Linux
+- MacOS
 
 

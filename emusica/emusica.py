@@ -133,18 +133,7 @@ def main():
     desc = """
         Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
         también permite agregar los metadatos de la canción como el nombre de artista o album.
-        
-        El formato por defecto para la lista de canciones es:```[tiempo] [nombre]``` por cada línea.
-        
-        Ejemplo de una línea en el archivo: 
-        > 00:00 "Nombre de canción"
-        
-        Si se unen las opciones -a y -b de esta forma -ab. El formato puede debe ser: ```[tiempo] [artista] [nombre] 
-        [album]``` 
-        
-        Ejemplo de una línea en el archivo: 
-        
-        > 00:00 "Nombre de canción" "Nombre de artista" "Nombre de album"
+        Para más información puedes consultar la página del proyecto https://github.com/MGCcoder/extractor-de-musica
     """
     parser = argparse.ArgumentParser(description=desc)
 
