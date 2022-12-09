@@ -2,7 +2,7 @@
 Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
 también permite agregar los metadatos de la canción como el nombre de artista o album.
 
-Cada la lista tiene que tener la siguiente estructura:
+Cada la lista tiene que tener la siguiente estructura: (El nombre no puede contener guiones)
 ``` 
 00:00 Nombre de canción 1
 15:00 Nombre de canción 2
