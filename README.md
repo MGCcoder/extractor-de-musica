@@ -1,4 +1,16 @@
 ## Extractor de música
+
+### Requisitos
+- Python 3
+- Ffmpeg
+
+### Sistemas Operativos compatibles
+- Windows
+- Linux
+- MacOS
+
+### Tutorial
+
 Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
 también permite agregar los metadatos de la canción como el nombre de artista o album.
 
@@ -52,14 +64,5 @@ Si se unen las 2 opciones -ab la estructura sería:
                      El formato del archivo para cada línea debera ser: 
                      [tiempo] [artista] - [nombre]
 ```
-
-### Requisitos
-- Python 3
-- Ffmpeg
-
-### Sistemas Operativos compatibles
-- Windows
-- Linux
-- MacOS
 
 
