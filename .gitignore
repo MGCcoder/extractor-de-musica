@@ -13,6 +13,6 @@ build/
 emusica.egg-info/
 dist/
 
-## IDE's
+## Editors folders
 .idea/*
 .vscode/*
