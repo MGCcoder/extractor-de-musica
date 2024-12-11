@@ -101,11 +101,11 @@ def separar_canciones(lista_canciones, archivo_de_musica):
         subprocess.call("mkdir '{}'".format(nombre_de_directorio), shell=True)
         for cancion in lista_canciones:
             # Este comando corta una cancion en un intervalo de tiempo
-            separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/cancion.mp3'".format(
+            separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/tem.mp3'".format(
                 archivo_de_musica, cancion, nombre_de_directorio)
-            metadatos = "ffmpeg -i './{1}/cancion.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
+            metadatos = "ffmpeg -i './{1}/tem.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
                 cancion, nombre_de_directorio)
-            borrar = "rm './{0}/cancion.mp3'".format(nombre_de_directorio)
+            borrar = "rm './{0}/tem.mp3'".format(nombre_de_directorio)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
@@ -113,11 +113,11 @@ def separar_canciones(lista_canciones, archivo_de_musica):
         subprocess.call('mkdir "{}"'.format(nombre_de_directorio), shell=True)
         for cancion in lista_canciones:
             # Este comando corta una cancion en un intervalo de tiempo
-            separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\cancion.mp3"'.format(
+            separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\\tem.mp3"'.format(
                 archivo_de_musica, cancion, nombre_de_directorio)
-            metadatos = 'ffmpeg -i ".\{1}\cancion.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
+            metadatos = 'ffmpeg -i ".\{1}\\tem.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
                 cancion, nombre_de_directorio)
-            borrar = 'del ".\{0}\cancion.mp3"'.format(nombre_de_directorio)
+            borrar = 'del ".\{0}\\tem.mp3"'.format(nombre_de_directorio)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
@@ -142,7 +142,9 @@ def main():
     parser.add_argument('--list', help=lista_desc, required=True)
 
     musica = """
-        Es el nombre del archivo de música con las canciones unidas
+        Es el nombre del archivo de música con las canciones unidas. 
+        El formato por defecto es:
+        [tiempo] [nombre]
     """
     parser.add_argument('--music', help=musica, required=True)
 
