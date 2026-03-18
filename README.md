@@ -3,6 +3,7 @@
 
 ### Instalación
 
+Corre este comando en consola
 ```shell
 pip install emusica
 ```
