@@ -3,7 +3,9 @@
 
 ### Instalación
 
-> `pip install emusica`
+```shell
+pip install emusica
+```
 
 ### Requisitos
 
