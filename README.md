@@ -21,7 +21,7 @@ pip install emusica
 
 ### Tutorial
 
-Con este programa puedes extraer las pistas de canciones que están unidas en un solo archivo de audio a partir de un archivo de texto donde este la lista de cancionoes y sus marcas de tiempo, también permite agregar los metadatos de la canción como el nombre de artista o album.
+Con este programa puedes extraer las pistas de canciones que están unidas en un solo archivo de audio a partir de un archivo de texto donde este la lista de canciones y sus marcas de tiempo, también permite agregar los metadatos de la canción como el nombre de artista o album.
 
 La lista debe tener la siguiente estructura:
 
@@ -64,15 +64,15 @@ Si se unen las 2 opciones -ab la estructura sería:
 ```txt
   -h,     --help     show this help message and exit
   
-  --list    LIST     Es el nombre del archivo donde esta la lista de muscia con las marcas de tiempo.
+  --list    LIST     Es el nombre del archivo donde esta la lista de música con las marcas de tiempo.
   
   --music   MUSIC    Es el nombre del archivo de música con las canciones unidas
   
-  --album,  -b       Si el archivo contiene albumes puedes agregar esta bandera. 
-                     El formato del archivo para cada línea debera ser: 
+  --album,  -b       Si el archivo contiene álbumes puedes agregar esta bandera. 
+                     El formato del archivo para cada línea deberá ser: 
                      [tiempo] [album] - [nombre]
                      
   --artist, -a       Si el archivo contiene artistas puede agregar esta bandera. 
-                     El formato del archivo para cada línea debera ser: 
+                     El formato del archivo para cada línea deberá ser: 
                      [tiempo] [artista] - [nombre]
 ```

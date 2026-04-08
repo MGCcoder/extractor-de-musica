@@ -94,35 +94,42 @@ def calcular_tiempo_final(lista_canciones, archivo_de_musica):
 
 
 def separar_canciones(lista_canciones, archivo_de_musica):
+    """Separa las canciones
+    lc = lista de canciones
+    aoc = archivo original de música
+    c_tem = archivo temporal de pista
+    nd = nombre de nuevo directorio
+    """
     lista_canciones = calcular_tiempo_final(lista_canciones, archivo_de_musica)
     print("\n\nVideo: {}\n\n".format(archivo_de_musica))
     nombre_de_directorio = input('Escriba el nombre del nuevo directorio donde se guardaran las canciones: ')
+    pista = "pista_tem" #Nombre temporal de la pista
     if(platform.system() == "Linux" or platform.system() == "Darwin"):
         subprocess.call("mkdir '{}'".format(nombre_de_directorio), shell=True)
         for cancion in lista_canciones:
-            # Este comando corta una cancion en un intervalo de tiempo
-            separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/tem.mp3'".format(
-                archivo_de_musica, cancion, nombre_de_directorio)
-            metadatos = "ffmpeg -i './{1}/tem.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
-                cancion, nombre_de_directorio)
-            borrar = "rm './{0}/tem.mp3'".format(nombre_de_directorio)
+            # Este comando corta una canción en un intervalo de tiempo
+            separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/{3}.mp3'".format(
+                archivo_de_musica, cancion, nombre_de_directorio, pista)
+            metadatos = "ffmpeg -i './{1}/{2}.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
+                cancion, nombre_de_directorio, pista)
+            borrar = "rm './{0}/{1}.mp3'".format(nombre_de_directorio, pista)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
     elif(platform.system() == "Windows"):
         subprocess.call('mkdir "{}"'.format(nombre_de_directorio), shell=True)
         for cancion in lista_canciones:
-            # Este comando corta una cancion en un intervalo de tiempo
-            separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\\tem.mp3"'.format(
-                archivo_de_musica, cancion, nombre_de_directorio)
-            metadatos = 'ffmpeg -i ".\{1}\\tem.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
-                cancion, nombre_de_directorio)
-            borrar = 'del ".\{0}\\tem.mp3"'.format(nombre_de_directorio)
+            # Este comando corta una canción en un intervalo de tiempo
+            separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\\{3}.mp3"'.format(
+                archivo_de_musica, cancion, nombre_de_directorio, pista)
+            metadatos = 'ffmpeg -i ".\{1}\\{2}.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
+                cancion, nombre_de_directorio, pista)
+            borrar = 'del ".\{0}\\{1}.mp3"'.format(nombre_de_directorio,pista)
             subprocess.call(separar, shell=True)
             subprocess.call(metadatos, shell=True)
             subprocess.call(borrar, shell=True)
     else:
-        error = "No se reconece el sistema operativo"
+        error = "No se reconoce el sistema operativo"
         raise Exception(error)
 
 
@@ -130,6 +137,7 @@ def separar_canciones(lista_canciones, archivo_de_musica):
 
 def main():
     desc = """
+        <<Dev>>
         Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
         también permite agregar los metadatos de la canción como el nombre de artista o album.
         Para más información puedes consultar la página del proyecto https://github.com/MGCcoder/extractor-de-musica
@@ -150,14 +158,14 @@ def main():
 
     album_desc = """
     Si el archivo contiene albums puedes agregar esta bandera. 
-    El formato del archivo para cada línea debera ser: 
+    El formato del archivo para cada línea deberá ser: 
     [tiempo] [album] - [nombre]
     """
     parser.add_argument('--album', '-b', help=album_desc, action='store_true')
 
     artist_desc = """ 
      Si el archivo contiene artistas puede agregar esta bandera. 
-     El formato del archivo para cada línea debera ser: 
+     El formato del archivo para cada línea deberá ser: 
      [tiempo] [artista] - [nombre]
     """
     parser.add_argument('--artist', '-a', help=artist_desc, action='store_true')
