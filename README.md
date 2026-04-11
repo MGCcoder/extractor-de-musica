@@ -8,7 +8,7 @@ Corre este comando en consola
 pip install emusica
 ```
 
-### Requisitos
+### Dependencias
 
 - Python 3
 - Ffmpeg

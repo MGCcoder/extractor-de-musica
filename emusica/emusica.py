@@ -7,7 +7,8 @@ import platform
 class Cancion:
     tiempo_final = '0'
 
-    def __init__(self, tiempo, album='', artista='', nombre=''):
+    def __init__(self, numero, tiempo, album='', artista='', nombre=''):
+        self.numero = numero,
         self.tiempo_inicial = tiempo
         self.nombre = nombre.replace('-', ' ').strip()
         self.artista = artista.replace('-', ' ').strip()
@@ -15,13 +16,14 @@ class Cancion:
 
     def __repr__(self):
         return """
-["{}", "{}", "{}", "{}"]
-""".format(self.tiempo_inicial, self.nombre, self.artista, self.album)
+["{}","{}" "{}", "{}", "{}"]
+""".format(self.numero, self.tiempo_inicial, self.nombre, self.artista, self.album)
 
 
-def creacion_de_cancion(caso, coincidencia):
+def creacion_de_cancion(numero, caso, coincidencia):
     if caso == 1:
         return Cancion(
+            numero,
             coincidencia.group(1),
             '',
             '',
@@ -29,6 +31,7 @@ def creacion_de_cancion(caso, coincidencia):
         )
     if caso == 2:
         return Cancion(
+            numero,
             coincidencia.group(1),
             '',
             coincidencia.group(3),
@@ -36,6 +39,7 @@ def creacion_de_cancion(caso, coincidencia):
         )
     if caso == 3:
         return Cancion(
+            numero,
             coincidencia.group(1),
             coincidencia.group(3),
             '',
@@ -43,6 +47,7 @@ def creacion_de_cancion(caso, coincidencia):
         )
     if caso == 4:
         return Cancion(
+            numero,
             coincidencia.group(1),
             coincidencia.group(3),
             coincidencia.group(4),
@@ -69,7 +74,7 @@ def analizar_archivo(archivo_lista_canciones, expresion_regular, caso):
             # search encuentra el primer match
             coincidencias = re.search(r'' + expresion_regular, linea)
             if coincidencias is not None:
-                lista_canciones.append(creacion_de_cancion(caso, coincidencias))
+                lista_canciones.append(creacion_de_cancion(count, caso, coincidencias))
             else:
                 error = "Error en el formato del archivo línea {}\nEl formato debe ser: "+caso_cadena(caso)
                 raise Exception(error.format(count))
@@ -101,16 +106,17 @@ def separar_canciones(lista_canciones, archivo_de_musica):
     nd = nombre de nuevo directorio
     """
     lista_canciones = calcular_tiempo_final(lista_canciones, archivo_de_musica)
-    print("\n\nVideo: {}\n\n".format(archivo_de_musica))
+    print("\n\nArchivo de música: {}\n\n".format(archivo_de_musica))
     nombre_de_directorio = input('Escriba el nombre del nuevo directorio donde se guardaran las canciones: ')
     pista = "pista_tem" #Nombre temporal de la pista
     if(platform.system() == "Linux" or platform.system() == "Darwin"):
         subprocess.call("mkdir '{}'".format(nombre_de_directorio), shell=True)
         for cancion in lista_canciones:
-            # Este comando corta una canción en un intervalo de tiempo
+            # Este comando corta una pista en un intervalo de tiempo
             separar = "ffmpeg -i '{0}' -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} './{2}/{3}.mp3'".format(
                 archivo_de_musica, cancion, nombre_de_directorio, pista)
-            metadatos = "ffmpeg -i './{1}/{2}.mp3' -c copy  -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
+            # Agrego los metadatos a la pista
+            metadatos = "ffmpeg -i './{1}/{2}.mp3' -c copy  -metadata track='{0.numero}' -metadata title='{0.nombre}' -metadata album='{0.album}' -metadata artist='{0.artista}' './{1}/{0.nombre}.mp3'".format(
                 cancion, nombre_de_directorio, pista)
             borrar = "rm './{0}/{1}.mp3'".format(nombre_de_directorio, pista)
             subprocess.call(separar, shell=True)
@@ -122,7 +128,7 @@ def separar_canciones(lista_canciones, archivo_de_musica):
             # Este comando corta una canción en un intervalo de tiempo
             separar = 'ffmpeg -i "{0}" -c:v copy -c:a libmp3lame -q:a 4 -ss {1.tiempo_inicial}  -to {1.tiempo_final} ".\{2}\\{3}.mp3"'.format(
                 archivo_de_musica, cancion, nombre_de_directorio, pista)
-            metadatos = 'ffmpeg -i ".\{1}\\{2}.mp3" -c copy -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
+            metadatos = 'ffmpeg -i ".\{1}\\{2}.mp3" -c copy -metadata track="{0.numero}" -metadata title="{0.nombre}" -metadata album="{0.album}" -metadata artist="{0.artista}" ".\{1}\{0.nombre}.mp3"'.format(
                 cancion, nombre_de_directorio, pista)
             borrar = 'del ".\{0}\\{1}.mp3"'.format(nombre_de_directorio,pista)
             subprocess.call(separar, shell=True)
@@ -140,6 +146,7 @@ def main():
         <<Dev>>
         Con este programa puedes extraer música que está unida en un solo archivo de música a partir de una lista con sus marcas de tiempo,
         también permite agregar los metadatos de la canción como el nombre de artista o album.
+        Si el álbum tiene espacios escribelo entre parentesis.
         Para más información puedes consultar la página del proyecto https://github.com/MGCcoder/extractor-de-musica
     """
     parser = argparse.ArgumentParser(description=desc)
